@@ -34,7 +34,7 @@ import com.bb1.registry.IRegisterable;
  * 
  * @author BradBot_1
  */
-public interface EventListener extends IRegisterable<String> {
+public interface IEventListener extends IRegisterable<String> {
 	
 	static final @NotNull Method DECOMPOSE_METHOD = handle(()->Event.class.getMethod("decompose", Object.class));
 	
