@@ -3,6 +3,7 @@ package com.bb1.events;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.bb1.registry.IRegisterable;
 import com.bb1.registry.IRegistry;
-import com.bb1.registry.SimpleRegistry;
+import com.bb1.registry.SimpleValidatedRegistry;
 
 /**
  * 
@@ -36,7 +37,8 @@ import com.bb1.registry.SimpleRegistry;
  */
 public class Event<I> implements IRegisterable<String> {
 	
-	public static final @NotNull IRegistry<String, Event<?>> EVENT_REGISTRY = new SimpleRegistry<String, Event<?>>();
+	private static final @NotNull Set<BiConsumer<String, Event<?>>> EVENT_REGISTER_HANDLERS = Collections.newSetFromMap(new ConcurrentHashMap<BiConsumer<String, Event<?>>, Boolean>());
+	public static final @NotNull IRegistry<String, Event<?>> EVENT_REGISTRY = new SimpleValidatedRegistry<String, Event<?>>((e,s)->{ EVENT_REGISTER_HANDLERS.forEach(c->c.accept(s, e)); return true;});
 	
 	private final @NotNull Set<Consumer<I>> handlers = Collections.newSetFromMap(new ConcurrentHashMap<Consumer<I>, Boolean>());
 	private @Nullable Function<I, Object[]> decomposer;
