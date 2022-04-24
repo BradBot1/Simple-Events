@@ -40,6 +40,10 @@ public class Event<I> implements IRegisterable<String> {
 	private static final @NotNull Set<BiConsumer<String, Event<?>>> EVENT_REGISTER_HANDLERS = Collections.newSetFromMap(new ConcurrentHashMap<BiConsumer<String, Event<?>>, Boolean>());
 	public static final @NotNull IRegistry<String, Event<?>> EVENT_REGISTRY = new SimpleValidatedRegistry<String, Event<?>>((e,s)->{ EVENT_REGISTER_HANDLERS.forEach(c->c.accept(s, e)); return true;});
 	
+	public static final void addEventRegisterHandler(@NotNull final BiConsumer<String, Event<?>> handler) {
+		EVENT_REGISTER_HANDLERS.add(handler);
+	}
+	
 	private final @NotNull Set<Consumer<I>> handlers = Collections.newSetFromMap(new ConcurrentHashMap<Consumer<I>, Boolean>());
 	private @Nullable Function<I, Object[]> decomposer;
 	private @NotNull String name = null;
