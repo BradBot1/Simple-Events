@@ -54,6 +54,10 @@
 	</build>
 
 	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -64,21 +68,21 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.bb1</groupId>
-			<artifactId>simple-registries</artifactId>
-			<version>1.0.0</version>
+			<groupId>com.github.BradBot1</groupId>
+	    	<artifactId>Simple-Registries</artifactId>
+			<version>-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.bb1</groupId>
-			<artifactId>reflection-utils</artifactId>
-			<version>1.0.0</version>
+		    <groupId>com.github.BradBot1</groupId>
+		    <artifactId>Reflection-Utilities</artifactId>
+		    <version>-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.bb1</groupId>
-			<artifactId>exception-handler</artifactId>
-			<version>1.0.0</version>
+			<groupId>com.github.BradBot1</groupId>
+			<artifactId>Exceptions-Handler</artifactId>
+			<version>-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
