@@ -1,17 +1,17 @@
-package com.bb1.events;
+package fun.bb1.events;
 
 
-import static com.bb1.events.Event.EVENT_REGISTRY;
-import static com.bb1.exceptions.handler.ExceptionHandler.handle;
-import static com.bb1.reflection.MethodUtils.getInheritedMethodsWithAnnotation;
-import static com.bb1.reflection.MethodUtils.invokeMethod;
+import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
+import static fun.bb1.reflection.MethodUtils.getInheritedMethodsWithAnnotation;
+import static fun.bb1.reflection.MethodUtils.invokeMethod;
+import static fun.bb1.events.Event.EVENT_REGISTRY;
 
 import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.bb1.registry.IRegisterable;
+import fun.bb1.registry.IRegisterable;
 
 /**
  * 

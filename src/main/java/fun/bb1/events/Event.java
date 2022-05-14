@@ -1,4 +1,4 @@
-package com.bb1.events;
+package fun.bb1.events;
 
 import java.util.Collections;
 import java.util.Set;
@@ -10,8 +10,8 @@ import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.bb1.registry.IRegisterable;
-import com.bb1.registry.IRegistry;
+import fun.bb1.registry.IRegisterable;
+import fun.bb1.registry.IRegistry;
 
 /**
  * 

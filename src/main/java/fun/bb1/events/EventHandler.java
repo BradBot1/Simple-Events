@@ -1,4 +1,4 @@
-package com.bb1.events;
+package fun.bb1.events;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

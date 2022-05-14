@@ -1,4 +1,4 @@
-package com.bb1.events;
+package fun.bb1.events;
 
 import java.util.Collections;
 import java.util.Map.Entry;
@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.bb1.registry.SimpleRegistry;
+import fun.bb1.registry.SimpleRegistry;
 
 /**
  * 
