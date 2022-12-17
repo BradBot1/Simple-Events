@@ -31,7 +31,7 @@ import fun.bb1.registry.SimpleRegistry;
  * 
  * @author BradBot_1
  */
-final class EventRegistry extends SimpleRegistry<String, Event<?>> {
+final class EventStore extends SimpleRegistry<String, Event<?>> {
 	
 	private final @NotNull Set<BiConsumer<String, Event<?>>> registerHandlers = Collections.newSetFromMap(new ConcurrentHashMap<BiConsumer<String, Event<?>>, Boolean>());
 	

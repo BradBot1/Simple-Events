@@ -36,10 +36,10 @@ import fun.bb1.registry.IRegistry;
  */
 public class Event<I> implements IRegisterable<String> {
 	
-	public static final @NotNull IRegistry<String, Event<?>> EVENT_REGISTRY = new EventRegistry();
+	public static final @NotNull IRegistry<String, Event<?>> EVENT_REGISTRY = new EventStore();
 	
 	public static final void addEventRegisterHandler(@NotNull final BiConsumer<String, Event<?>> handler) {
-		((EventRegistry)EVENT_REGISTRY).addRegisterHandler(handler); // done with casting as the registry used for events may change in the future
+		((EventStore)EVENT_REGISTRY).addRegisterHandler(handler); // done with casting as the registry used for events may change in the future
 	}
 	
 	private final @NotNull Set<Consumer<I>> handlers = Collections.newSetFromMap(new ConcurrentHashMap<Consumer<I>, Boolean>());
