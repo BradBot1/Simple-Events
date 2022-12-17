@@ -46,12 +46,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>fun.bb1</groupId>
-	    	<artifactId>simple-registries</artifactId>
-			<version>1.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 		    <groupId>fun.bb1</groupId>
 		    <artifactId>reflection-utils</artifactId>
 		    <version>1.1.0</version>
