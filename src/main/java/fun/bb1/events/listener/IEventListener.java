@@ -1,17 +1,16 @@
-package fun.bb1.events;
+package fun.bb1.events.listener;
 
 
 import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
 import static fun.bb1.reflection.MethodUtils.getInheritedMethodsWithAnnotation;
 import static fun.bb1.reflection.MethodUtils.invokeMethod;
-import static fun.bb1.events.Event.EVENT_REGISTRY;
 
 import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.registry.IRegisterable;
+import fun.bb1.events.Event;
 
 /**
  * 
@@ -34,7 +33,7 @@ import fun.bb1.registry.IRegisterable;
  * 
  * @author BradBot_1
  */
-public interface IEventListener extends IRegisterable<String> {
+public interface IEventListener {
 	
 	static final @NotNull Method DECOMPOSE_METHOD = handle(()->Event.class.getMethod("decompose", Object.class));
 	
@@ -42,7 +41,7 @@ public interface IEventListener extends IRegisterable<String> {
 		for (final Method method : getInheritedMethodsWithAnnotation(this.getClass(), EventHandler.class, null)) {
 			method.canAccess(true); // ensure we can invoke the method
 			final EventHandler handler = method.getAnnotation(EventHandler.class);
-			final Event<?> event = EVENT_REGISTRY.get(handler.value());
+			final Event<?> event = null; // TODO: this
 			if (event==null) { // the event cannot be found
 				if (handler.required()) { // we need to throw an exception as this handler is required
 					throw new IllegalStateException("The required event handler '" + method.getName() + "' cannot bind to '" + handler.value() + "' as it cannot be found. Is the event registered?");
