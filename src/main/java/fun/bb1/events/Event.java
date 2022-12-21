@@ -1,17 +1,17 @@
 package fun.bb1.events;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.registry.IRegisterable;
-import fun.bb1.registry.IRegistry;
+import fun.bb1.events.handler.EventPriority;
+import fun.bb1.events.handler.IEventHandler;
 
 /**
  * 
@@ -34,39 +34,75 @@ import fun.bb1.registry.IRegistry;
  * 
  * @author BradBot_1
  */
-public class Event<I> implements IRegisterable<String> {
+public class Event<I> {
 	
-	public static final @NotNull IRegistry<String, Event<?>> EVENT_REGISTRY = new EventStore();
-	
-	public static final void addEventRegisterHandler(@NotNull final BiConsumer<String, Event<?>> handler) {
-		((EventStore)EVENT_REGISTRY).addRegisterHandler(handler); // done with casting as the registry used for events may change in the future
-	}
-	
-	private final @NotNull Set<Consumer<I>> handlers = Collections.newSetFromMap(new ConcurrentHashMap<Consumer<I>, Boolean>());
+	private final @NotNull Map<EventPriority, List<IEventHandler<I>>> handlers = new EnumMap<EventPriority, List<IEventHandler<I>>>(EventPriority.class) {
+		private static final long serialVersionUID = 1L;
+	{
+		for (final EventPriority priority : EventPriority.values()) {
+			put(priority, priority.isSingleton() ? List.of() : new ArrayList<IEventHandler<I>>());
+		}
+	}};
 	private @Nullable Function<I, Object[]> decomposer;
-	private @NotNull String name = null;
+	private @NotNull final String name;
+	private @NotNull final Logger logger;
 	
-	public Event() { }
+	public Event() {
+		this.name = getClass().getName();
+		this.logger = Logger.getLogger("Event | " + (this.name == null ? this.getClass().getName() : this.name));
+	}
 	
 	public Event(@NotNull final String name) {
-		this.register(name);
+		this(name, null);
 	}
 	
-	public Event(@NotNull final String name, @NotNull final Function<I, Object[]> decomposer) {
-		this.register(name);
+	public Event(@NotNull final String name, @Nullable final Function<I, Object[]> decomposer) {
+		this.name = name;
 		this.decomposer = decomposer;
+		this.logger = Logger.getLogger("Event | " + (this.name == null ? this.getClass().getName() : this.name));
 	}
 	
-	public void addHandler(@NotNull Consumer<I> handler) {
-		this.handlers.add(handler);
+	public void addHandler(@NotNull final IEventHandler<I> handler) {
+		this.addHandler(handler, EventPriority.DEFAULT, false);
 	}
 	
-	public void emit(@NotNull I input) {
-		this.handlers.forEach((handler)->handler.accept(input));
+	public void addHandler(@NotNull final IEventHandler<I> handler, @NotNull final EventPriority priority) {
+		this.addHandler(handler, priority, false);
+	}
+	
+	public void addHandler(@NotNull final IEventHandler<I> handler, @NotNull final EventPriority priority, final boolean force) {
+		final List<IEventHandler<I>> handlerList = this.handlers.get(priority);
+		if (priority.isSingleton()) {
+			if (handlerList.isEmpty()) {
+				this.handlers.put(priority, List.of(handler));
+				return;
+			}
+			if (force) {
+				this.addHandler(handlerList.get(0), priority.getFallbackValue(), false);
+				this.handlers.put(priority, List.of(handler));
+				this.logger.info("Singleton handler overriden for " + priority.name().toLowerCase() + ", " + handlerList.get(0).getClass().getName() + " => " + handler.getClass().getName());
+				return;
+			}
+			this.addHandler(handler, priority.getFallbackValue(), false);
+			this.logger.warning("Failed to install singleton handler for " + handler.getClass().getName());
+		}
+		
+	}
+	
+	public Runnable emit(@NotNull I input) {
+		for (final EventPriority priority : EventPriority.getOrderedArray()) {
+			this.handlers.get(priority).forEach((handler) -> {
+				handler.handleEvent(input);
+			});
+		}
+		return () -> {
+			this.handlers.get(EventPriority.WATCH).forEach((handler) -> {
+				handler.handleEvent(input);
+			});
+		};
 	}
 	
 	public final @NotNull String getName() {
-		if (this.name == null) throw new IllegalStateException("The name has not been set yet! Please register the event with #register(Ljava/lang/String;)V");
 		return this.name;
 	}
 	
@@ -76,14 +112,6 @@ public class Event<I> implements IRegisterable<String> {
 	
 	public final void setDecomposer(@NotNull final Function<I, Object[]> decomposer) {
 		this.decomposer = decomposer;
-	}
-	
-	@Override
-	public void register(@Nullable final String name) {
-		if (this.name != null) throw new IllegalStateException("This event is already registered!");
-		if (name == null) throw new IllegalArgumentException("Invalid argument: 'name' cannot be null!");
-		this.name = name;
-		EVENT_REGISTRY.register(this.name, this);
 	}
 	
 }
