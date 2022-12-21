@@ -59,4 +59,8 @@ public enum EventPriority {
 		return this.fallbackValue == null;
 	}
 	
+	public static final EventPriority[] getOrderedArray() {
+		return new EventPriority[] { FIRST, HIGH, DEFAULT, LOW, LAST };
+	}
+	
 }
