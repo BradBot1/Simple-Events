@@ -1,4 +1,4 @@
-package fun.bb1.events;
+package fun.bb1.events.abstraction;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

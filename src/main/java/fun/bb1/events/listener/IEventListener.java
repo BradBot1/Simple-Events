@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.events.Event;
+import fun.bb1.events.abstraction.Event;
 
 /**
  * 
