@@ -6,9 +6,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.jetbrains.annotations.NotNull;
+
+import fun.bb1.events.handler.EventPriority;
+import fun.bb1.objects.annotations.DisallowsEmptyString;
+
 /**
  * 
- * Copyright 2022 BradBot_1
+ * Copyright 2023 BradBot_1
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +42,11 @@ public @interface EventHandler {
 	 * 
 	 * @return The name of the event to bind to
 	 */
-	public String value();
+	public @NotNull @DisallowsEmptyString String value();
 	/**
 	 * Used to designate an event handler as required, only use when the handler is integral to the use case!
 	 * 
-	 * @apiNote This will cause an {@link IllegalStateException} if the event fails to bind
+	 * @apiNote This will cause an {@link IllegalStateException} if the event fails to bind (binding will fail when the event is not yet registered)
 	 * 
 	 * @return If the event handler is required
 	 */
@@ -53,6 +58,12 @@ public @interface EventHandler {
 	 * 
 	 * @return If the arguments should be split from an array to individual arguments
 	 */
-	public boolean decompose() default false;
-	
+	@Deprecated(forRemoval = true, since = "2.0.0")
+	public boolean decompose() default false; // Removed until I find a better way to do it
+	/**
+	 * Used to denote the {@link EventPriority} of the annotated event
+	 * 
+	 * @return The {@link EventPriority} that this event will occur at
+	 */
+	public @NotNull EventPriority handler() default EventPriority.DEFAULT;
 }
