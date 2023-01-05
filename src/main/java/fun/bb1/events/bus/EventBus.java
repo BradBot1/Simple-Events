@@ -3,6 +3,7 @@ package fun.bb1.events.bus;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,7 @@ public final class EventBus {
 	public static final @NotNull EventBus DEFAULT_BUS = new EventBus();
 	
 	private final @NotNull Map<String, IEventRoute<?>> routes = new ConcurrentHashMap<String, IEventRoute<?>>();
+	private final @NotNull Logger logger = Logger.getLogger("EventBus | " + this.hashCode());
 	
 	public <I> void publishRoute(@NotNull @DisallowsEmptyString final String eventName, @NotNull final Class<I> clazz) {
 		this.publishRoute(eventName, new EventRouteImpl<I>(new HashSet<IEventMiddleware<I>>(), new EventHandlerStoreImpl<I>(null), clazz));
@@ -116,17 +118,53 @@ public final class EventBus {
 	 * @param force If to override any pre-existing {@link EventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
 	 * @param clazz The {@link Class} of the type (can be null)
 	 * 
-	 * @throws IllegalArgumentException If clazz is null and the event is not registered
+	 * @throws IllegalArgumentException If clazz is null and the event is not published
 	 * @throws IllegalArgumentException If the {@link IEventHandler} type does not match the {@link IEventRoute} type
 	 */
 	@SuppressWarnings("unchecked")
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final EventPriority priority, final @NotNull IEventHandler<I> handler, final boolean force, @Nullable final Class<I> clazz) {
 		if (!this.routes.containsKey(eventName)) {
-			if (clazz == null) throw new IllegalArgumentException("Null provided for clazz when event is not registered!");
+			if (clazz == null) throw new IllegalArgumentException("Null provided for clazz when event is not published!");
 			else this.publishRoute(eventName, clazz);
 		}
 		try {
 			((IEventRoute<I>) this.routes.get(eventName)).addStop(priority, handler, force);
+			
+		} catch (Throwable e) {
+			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
+		}
+	}
+	/**
+	 * Invokes {@link #recievePassenger(String, Object)} and then invokes the {@link Runnable} that is returned
+	 * 
+	 * @param <I> The event data type
+	 * @param eventName The name of the event 
+	 * @param eventData The data of the event
+	 */
+	public <I> void recievePassengerAndInformWatchers(final @NotNull @DisallowsEmptyString String eventName, final @NotNull I eventData) {
+		this.recievePassenger(eventName, eventData).run();
+	}
+	/**
+	 * Emits an event through the appropriate {@link IEventMiddleware} and {@link IEventHandler}s
+	 * 
+	 * @param <I> The event data type
+	 * @param eventName The name of the event 
+	 * @param eventData The data of the event
+	 * @return A runnable that informs {@link EventPriority#WATCH} of the event, call after event is completely done
+	 * @throws IllegalArgumentException If the eventName given has no published event
+	 * @throws IllegalArgumentException When the type of the published route and eventData do not match
+	 */
+	@SuppressWarnings("unchecked")
+	public <I> @Nullable Runnable recievePassenger(final @NotNull @DisallowsEmptyString String eventName, final @NotNull I eventData) {
+		if (!this.routes.containsKey(eventName)) throw new IllegalArgumentException("The event \"" + eventName + "\" isn't published!");
+		try {
+			final IEventRoute<I> route = (IEventRoute<I>) this.routes.get(eventName);
+			final I alteredEventData = route.passThroughMiddleware(eventData);
+			if (alteredEventData == null) {
+				this.logger.info("The event \"" + eventName + "\" was cancelled by middleware");
+				return null;
+			}
+			return route.travelRoute(alteredEventData);
 		} catch (Throwable e) {
 			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
 		}
