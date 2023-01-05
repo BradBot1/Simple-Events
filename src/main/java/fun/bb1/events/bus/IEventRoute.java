@@ -1,6 +1,5 @@
 package fun.bb1.events.bus;
 
-import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +35,5 @@ public interface IEventRoute<I> {
 	 */
 	public void addStop(final @Nullable EventPriority priority, final @NotNull IEventHandler<I> eventHandler, final @Nullable Boolean force);
 	
-	@SuppressWarnings("unchecked")
-	@Internal
-	public default IEventHandler<I> castHandler(final @NotNull IEventHandler<?> eventHandler) {
-		return (IEventHandler<I>) eventHandler;
-	}
+	public void removeStop(final @NotNull IEventHandler<I> eventHandler);
 }

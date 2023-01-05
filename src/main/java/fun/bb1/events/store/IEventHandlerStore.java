@@ -24,6 +24,8 @@ public interface IEventHandlerStore<I> {
 	 * @param force If to override any pre-existing {@link IEventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
 	 */
 	public void register(@NotNull final EventPriority priority, @NotNull final IEventHandler<I> handler, final boolean force);
+	
+	public void unregister(@NotNull final IEventHandler<I> handler);
 	/**
 	 * Gets and returns all {@link IEventHandler}s in order (as defined by {@link EventPriority#getOrderedArray()})
 	 * 

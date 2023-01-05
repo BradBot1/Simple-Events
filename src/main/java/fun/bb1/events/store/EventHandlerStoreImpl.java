@@ -54,8 +54,15 @@ public final class EventHandlerStoreImpl<I> implements IEventHandlerStore<I> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public @NotNull List<IEventHandler<I>> fetchWithPriority(@NotNull EventPriority eventPriority) {
+	public @NotNull List<IEventHandler<I>> fetchWithPriority(@NotNull final EventPriority eventPriority) {
 		return List.copyOf(this.handlers.get(eventPriority)); // since docs state must be immutable
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void unregister(@NotNull final IEventHandler<I> handler) {
+		this.handlers.values().forEach(l -> l.remove(handler));
 	}
 	
 }

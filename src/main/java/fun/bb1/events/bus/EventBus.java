@@ -133,6 +133,16 @@ public final class EventBus {
 			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <I> void unsubscribe(@NotNull @DisallowsEmptyString final String eventName, final @NotNull IEventHandler<I> handler) {
+		if (!this.routes.containsKey(eventName)) return;
+		try {
+			((IEventRoute<I>) this.routes.get(eventName)).removeStop(handler);
+		} catch (Throwable e) {
+			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
+		}
+	}
 	/**
 	 * Invokes {@link #recievePassenger(String, Object)} and then invokes the {@link Runnable} that is returned
 	 * 

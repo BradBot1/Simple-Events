@@ -24,13 +24,12 @@ public final class HandlerListImpl<I extends StaticEvent<I>> implements IHandler
 
 	@Override
 	public void register(@NotNull IEventHandler<I> eventHandler) {
-		this.bus.subscribe(clazz.getSimpleName(), eventHandler);
+		this.bus.subscribe(this.clazz.getSimpleName(), eventHandler);
 	}
 
 	@Override
 	public void unregister(@NotNull IEventHandler<I> eventHandler) {
-		// TODO Auto-generated method stub
-		
+		this.bus.unsubscribe(this.clazz.getSimpleName(), eventHandler);
 	}
 	
 }

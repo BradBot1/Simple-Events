@@ -48,5 +48,11 @@ public final record EventRouteImpl<I>(@NotNull Collection<IEventMiddleware<I>> m
 	public void addStop(@NotNull final EventPriority priority, @NotNull final IEventHandler<I> eventHandler, @Nullable final Boolean force) {
 		this.handlerStore.register(priority == null ? EventPriority.DEFAULT : priority, eventHandler, force == null ? false : force.booleanValue());
 	}
-	
+	/***
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeStop(@NotNull final IEventHandler<I> eventHandler) {
+		this.handlerStore.unregister(eventHandler);
+	}
 }
