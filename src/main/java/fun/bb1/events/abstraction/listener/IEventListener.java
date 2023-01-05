@@ -1,4 +1,4 @@
-package fun.bb1.events.listener;
+package fun.bb1.events.abstraction.listener;
 
 
 import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
