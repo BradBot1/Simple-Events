@@ -45,19 +45,9 @@
 			<version>23.0.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>fun.bb1</groupId>
-		    <artifactId>reflection-utils</artifactId>
-		    <version>1.1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>fun.bb1</groupId>
 			<artifactId>objects</artifactId>
 			<version>1.5.2</version>
-		</dependency>
-		<dependency>
-			<groupId>fun.bb1</groupId>
-			<artifactId>exception-handler</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 	
