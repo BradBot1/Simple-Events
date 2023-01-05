@@ -44,23 +44,6 @@ public @interface EventHandler {
 	 */
 	public @NotNull @DisallowsEmptyString String value();
 	/**
-	 * Used to designate an event handler as required, only use when the handler is integral to the use case!
-	 * 
-	 * @apiNote This will cause an {@link IllegalStateException} if the event fails to bind (binding will fail when the event is not yet registered)
-	 * 
-	 * @return If the event handler is required
-	 */
-	public boolean required() default false;
-	/**
-	 * TODO: think of a good way to explain this
-	 * 
-	 * @apiNote Not all events will support this!
-	 * 
-	 * @return If the arguments should be split from an array to individual arguments
-	 */
-	@Deprecated(forRemoval = true, since = "2.0.0")
-	public boolean decompose() default false; // Removed until I find a better way to do it
-	/**
 	 * Used to denote the {@link EventPriority} of the annotated event
 	 * 
 	 * @return The {@link EventPriority} that this event will occur at
