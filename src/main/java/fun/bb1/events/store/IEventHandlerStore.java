@@ -18,23 +18,6 @@ public interface IEventHandlerStore<I> {
 	@Reassignable
 	public static @NotNull Container<Logger> DEFAULT_LOGGER = new Container<Logger>(Logger.getLogger("EventHandlerStore"));
 	/**
-	 * Forwards to {@link #register(EventPriority, IEventHandler, boolean)} with priority set to {@link EventPriority#DEFAULT} and force set to false
-	 * 
-	 * @param handler The {@link EventHandler} that is being registered
-	 */
-	public default void register(@NotNull final IEventHandler<I> handler) {
-		this.register(EventPriority.DEFAULT, handler, false);
-	}
-	/**
-	 * Forwards to {@link #register(EventPriority, IEventHandler, boolean)} with force set to false
-	 * 
-	 * @param priority The {@link EventPriority} to register under
-	 * @param handler The {@link EventHandler} that is being registered
-	 */
-	public default void register(@NotNull final EventPriority priority, @NotNull final IEventHandler<I> handler) {
-		this.register(priority, handler, false);
-	}
-	/**
 	 * Registers the provided {@link EventHandler} under the specified {@link EventPriority}
 	 * 
 	 * @param priority The {@link EventPriority} to register under
