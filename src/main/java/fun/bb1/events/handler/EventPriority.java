@@ -56,7 +56,7 @@ public enum EventPriority {
 	 * @return If only one {@link IEventHandler} can be registered to this priority
 	 */
 	public final boolean isSingleton() {
-		return this.fallbackValue == null;
+		return this.fallbackValue != null;
 	}
 	
 	public static final EventPriority[] getOrderedArray() {
