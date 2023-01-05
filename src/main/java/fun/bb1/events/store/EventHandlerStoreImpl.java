@@ -48,6 +48,8 @@ public final class EventHandlerStoreImpl<I> implements IEventHandlerStore<I> {
 			}
 			this.register(priority.getFallbackValue(), handler, false);
 			this.logger.warning("Failed to install singleton handler for " + handler.getClass().getName() + " as the desired priority is already taken");
+		} else {
+			handlerList.add(handler);
 		}
 	}
 	/**

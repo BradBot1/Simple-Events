@@ -123,12 +123,13 @@ public final class EventBus {
 	@SuppressWarnings("unchecked")
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final EventPriority priority, final @NotNull IEventHandler<I> handler, final boolean force, @Nullable final Class<I> clazz) {
 		if (!this.routes.containsKey(eventName)) {
+			this.logger.warning("Event handler registered before the event \"" + eventName + "\" was published!");
 			if (clazz == null) throw new IllegalArgumentException("Null provided for clazz when event is not published!");
 			else this.publishRoute(eventName, clazz);
+			this.logger.warning("The event \"" + eventName + "\" has been published to avoid issues, this may lead to conflicts");
 		}
 		try {
 			((IEventRoute<I>) this.routes.get(eventName)).addStop(priority, handler, force);
-			
 		} catch (Throwable e) {
 			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
 		}
