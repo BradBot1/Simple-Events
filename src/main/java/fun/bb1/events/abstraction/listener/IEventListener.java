@@ -1,8 +1,7 @@
 package fun.bb1.events.abstraction.listener;
 
 
-import static fun.bb1.reflection.MethodUtils.getInheritedMethodsWithAnnotation;
-
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -38,8 +37,14 @@ public interface IEventListener {
 	}
 	
 	public default void register(final @NotNull EventBus defaultBus) {
-		for (final Method method : getInheritedMethodsWithAnnotation(this.getClass(), EventHandler.class, null)) {
-			method.canAccess(true); // ensure we can invoke the method
+		for (final Method method : this.getClass().getMethods()) {
+			if (!method.isAnnotationPresent(EventHandler.class)) continue;
+			try {
+				method.setAccessible(true); // ensure we can invoke the method
+			} catch (InaccessibleObjectException | SecurityException e) {
+				// TODO: inform user
+				continue;
+			}
 			final EventHandler handler = method.getAnnotation(EventHandler.class);
 			if (handler.value() == null || handler.value().equals("")) {
 				// TODO: inform user
