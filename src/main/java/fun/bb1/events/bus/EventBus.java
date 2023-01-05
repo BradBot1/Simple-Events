@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.events.handler.EventPriority;
 import fun.bb1.events.handler.IEventHandler;
-import fun.bb1.events.listener.EventHandler;
 import fun.bb1.events.middleware.IEventMiddleware;
 import fun.bb1.events.store.EventHandlerStoreImpl;
 import fun.bb1.objects.annotations.DisallowsEmptyString;
@@ -57,7 +56,7 @@ public final class EventBus {
 	 * 
 	 * @param <I> The event data type
 	 * @param eventName The name of the event
-	 * @param handler The {@link EventHandler} that is forming a subscription
+	 * @param handler The {@link IEventHandler} that is forming a subscription
 	 */
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final IEventHandler<I> handler) {
 		this.subscribe(eventName, EventPriority.DEFAULT, handler, false, null);
@@ -67,7 +66,7 @@ public final class EventBus {
 	 * 
 	 * @param <I> The event data type
 	 * @param eventName The name of the event
-	 * @param handler The {@link EventHandler} that is forming a subscription
+	 * @param handler The {@link IEventHandler} that is forming a subscription
 	 * @param clazz The {@link Class} of the type (can be null)
 	 */
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final IEventHandler<I> handler, @Nullable final Class<I> clazz) {
@@ -79,7 +78,7 @@ public final class EventBus {
 	 * @param <I> The event data type
 	 * @param eventName The name of the event
 	 * @param priority The priority to register the event under
-	 * @param handler The {@link EventHandler} that is forming a subscription
+	 * @param handler The {@link IEventHandler} that is forming a subscription
 	 */
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final EventPriority priority, @NotNull final IEventHandler<I> handler) {
 		this.subscribe(eventName, priority, handler, false, null);
@@ -90,7 +89,7 @@ public final class EventBus {
 	 * @param <I> The event data type
 	 * @param eventName The name of the event
 	 * @param priority The priority to register the event under
-	 * @param handler The {@link EventHandler} that is forming a subscription
+	 * @param handler The {@link IEventHandler} that is forming a subscription
 	 * @param clazz The {@link Class} of the type (can be null)
 	 */
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final EventPriority priority, @NotNull final IEventHandler<I> handler, @Nullable final Class<I> clazz) {
@@ -102,20 +101,20 @@ public final class EventBus {
 	 * @param <I> The event data type
 	 * @param eventName The name of the event
 	 * @param priority The priority to register the event under
-	 * @param handler The {@link EventHandler} that is forming a subscription
-	 * @param force If to override any pre-existing {@link EventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
+	 * @param handler The {@link IEventHandler} that is forming a subscription
+	 * @param force If to override any pre-existing {@link IEventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
 	 */
 	public <I> void subscribe(@NotNull @DisallowsEmptyString final String eventName, @NotNull final EventPriority priority, final @NotNull IEventHandler<I> handler, final boolean force) {
 		this.subscribe(eventName, priority, handler, force, null);
 	}
 	/**
-	 * Subscribes the provided {@link EventHandler} up to the requested event
+	 * Subscribes the provided {@link IEventHandler} up to the requested event
 	 * 
 	 * @param <I> The event data type
 	 * @param eventName The name of the event
 	 * @param priority The priority to register the event under
-	 * @param handler The {@link EventHandler} that is forming a subscription
-	 * @param force If to override any pre-existing {@link EventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
+	 * @param handler The {@link IEventHandler} that is forming a subscription
+	 * @param force If to override any pre-existing {@link IEventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
 	 * @param clazz The {@link Class} of the type (can be null)
 	 * 
 	 * @throws IllegalArgumentException If clazz is null and the event is not published

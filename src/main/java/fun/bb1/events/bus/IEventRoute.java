@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.events.handler.EventPriority;
 import fun.bb1.events.handler.IEventHandler;
-import fun.bb1.events.listener.EventHandler;
 import fun.bb1.events.middleware.IEventMiddleware;
 
 public interface IEventRoute<I> {
@@ -32,8 +31,8 @@ public interface IEventRoute<I> {
 	 * Adds a stop to this route
 	 * 
 	 * @param priority The {@link EventPriority} to register under
-	 * @param handler The {@link EventHandler} that is being registered
-	 * @param force If to override any pre-existing {@link EventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
+	 * @param handler The {@link IEventHandler} that is being registered
+	 * @param force If to override any pre-existing {@link IEventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
 	 */
 	public void addStop(final @Nullable EventPriority priority, final @NotNull IEventHandler<I> eventHandler, final @Nullable Boolean force);
 	
