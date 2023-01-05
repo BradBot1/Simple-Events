@@ -1,16 +1,14 @@
 package fun.bb1.events.abstraction.listener;
 
 
-import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
 import static fun.bb1.reflection.MethodUtils.getInheritedMethodsWithAnnotation;
-import static fun.bb1.reflection.MethodUtils.invokeMethod;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.events.abstraction.Event;
+import fun.bb1.events.bus.EventBus;
 
 /**
  * 
@@ -34,25 +32,39 @@ import fun.bb1.events.abstraction.Event;
  * @author BradBot_1
  */
 public interface IEventListener {
+		
+	public default void register() {
+		this.register(EventBus.DEFAULT_BUS);
+	}
 	
-	static final @NotNull Method DECOMPOSE_METHOD = handle(()->Event.class.getMethod("decompose", Object.class));
-	
-	public default void register(@Nullable String name) {
+	public default void register(final @NotNull EventBus defaultBus) {
 		for (final Method method : getInheritedMethodsWithAnnotation(this.getClass(), EventHandler.class, null)) {
 			method.canAccess(true); // ensure we can invoke the method
 			final EventHandler handler = method.getAnnotation(EventHandler.class);
-			final Event<?> event = null; // TODO: this
-			if (event==null) { // the event cannot be found
-				if (handler.required()) { // we need to throw an exception as this handler is required
-					throw new IllegalStateException("The required event handler '" + method.getName() + "' cannot bind to '" + handler.value() + "' as it cannot be found. Is the event registered?");
-				}
-				continue; // go onto the next event
+			if (handler.value() == null || handler.value().equals("")) {
+				// TODO: inform user
+				continue;
 			}
-			if (handler.decompose()) {
-				event.addHandler((givenEventObject) -> invokeMethod(method, this, invokeMethod(DECOMPOSE_METHOD, event, givenEventObject)));
+			EventBus bus = defaultBus;
+			if (handler.busToUse() == null || handler.busToUse().equals("")) {
+				// TODO: inform user
 			} else {
-				event.addHandler((givenEventObject) -> invokeMethod(method, event, givenEventObject));
+				final String[] pathToBus = handler.busToUse().split("#", 2);
+				try {
+					bus = (EventBus) Class.forName(pathToBus[0]).getField(pathToBus[0]).get(null);
+				} catch (ClassCastException t) {
+					// TODO: inform user
+				} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException t) {
+					// TODO: inform user
+				} 
 			}
+			bus.subscribe(handler.value(), handler.priority(), (eventData)->{
+				try {
+					method.invoke(this, eventData);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			});
 		}
 	}
 	
