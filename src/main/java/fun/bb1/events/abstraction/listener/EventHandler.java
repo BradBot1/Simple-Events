@@ -48,5 +48,7 @@ public @interface EventHandler {
 	 * 
 	 * @return The {@link EventPriority} that this event will occur at
 	 */
-	public @NotNull EventPriority handler() default EventPriority.DEFAULT;
+	public @NotNull EventPriority priority() default EventPriority.DEFAULT;
+	
+	public @NotNull @DisallowsEmptyString String busToUse() default "fun.bb1.events.bus.EventBus#DEFAULT_BUS";
 }
