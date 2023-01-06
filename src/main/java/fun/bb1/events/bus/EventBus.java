@@ -134,6 +134,41 @@ public final class EventBus {
 			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
 		}
 	}
+	/**
+	 * Forwards to {@link #addMiddleware(String, IEventMiddleware, Class)} with clazz set to null
+	 * 
+	 * @param <I> The event data type
+	 * @param eventName The name of the event
+	 * @param middleware The {@link IEventMiddleware} that is forming a subscription
+	 */
+	public <I> void addMiddleware(@NotNull @DisallowsEmptyString final String eventName, @NotNull final IEventMiddleware<I> middleware) {
+		this.addMiddleware(eventName, middleware, null);
+	}
+	/**
+	 * Subscribes the provided {@link IEventHandler} up to the requested event
+	 * 
+	 * @param <I> The event data type
+	 * @param eventName The name of the event
+	 * @param middleware The {@link IEventMiddleware} that is forming a subscription
+	 * @param clazz The {@link Class} of the type (can be null)
+	 * 
+	 * @throws IllegalArgumentException If clazz is null and the event is not published
+	 * @throws IllegalArgumentException If the {@link IEventHandler} type does not match the {@link IEventRoute} type
+	 */
+	@SuppressWarnings("unchecked")
+	public <I> void addMiddleware(@NotNull @DisallowsEmptyString final String eventName, @NotNull final IEventMiddleware<I> middleware, @Nullable final Class<I> clazz) {
+		if (!this.routes.containsKey(eventName)) {
+			this.logger.warning("Event middleware registered before the event \"" + eventName + "\" was published!");
+			if (clazz == null) throw new IllegalArgumentException("Null provided for clazz when event is not published!");
+			else this.publishRoute(eventName, clazz);
+			this.logger.warning("The event \"" + eventName + "\" has been published to avoid issues, this may lead to conflicts");
+		}
+		try {
+			((IEventRoute<I>) this.routes.get(eventName)).addMiddleware(middleware);
+		} catch (Throwable e) {
+			throw new IllegalArgumentException("The Middleware provided does not match the event \"" + eventName + '"', e);
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public <I> void unsubscribe(@NotNull @DisallowsEmptyString final String eventName, final @NotNull IEventHandler<I> handler) {
@@ -179,5 +214,4 @@ public final class EventBus {
 			throw new IllegalArgumentException("The EventHandler provided does not match the event \"" + eventName + '"', e);
 		}
 	}
-	
 }
