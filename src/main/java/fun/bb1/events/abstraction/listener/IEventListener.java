@@ -4,8 +4,11 @@ package fun.bb1.events.abstraction.listener;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.events.bus.EventBus;
 
@@ -37,30 +40,38 @@ public interface IEventListener {
 	}
 	
 	public default void register(final @NotNull EventBus defaultBus) {
+		final Logger logger = Logger.getLogger("EventListener | " + defaultBus.hashCode());
 		for (final Method method : this.getClass().getMethods()) {
 			if (!method.isAnnotationPresent(EventHandler.class)) continue;
+			final EventHandler handler = method.getAnnotation(EventHandler.class);
+			if (method.getParameters().length <= 0) {
+				logger.warning("Skipping \"" + handler.value() + "\" as method has no parameters");
+				continue;
+			}
 			try {
 				method.setAccessible(true); // ensure we can invoke the method
 			} catch (InaccessibleObjectException | SecurityException e) {
-				// TODO: inform user
+				logger.warning("Skipping \"" + handler.value() + "\" as method is inaccessible");
 				continue;
 			}
-			final EventHandler handler = method.getAnnotation(EventHandler.class);
 			if (handler.value() == null || handler.value().equals("")) {
-				// TODO: inform user
+				logger.warning("Skipping \"" + handler.value() + "\" as value is invalid");
 				continue;
+			}
+			for (final Parameter parameters : method.getParameters()) {
+				initStatics(parameters.getType());
 			}
 			EventBus bus = defaultBus;
 			if (handler.busToUse() == null || handler.busToUse().equals("")) {
-				// TODO: inform user
+				logger.warning("Ignoring \"" + handler.value() + "\" as busToUse is invalid, using default");
 			} else {
 				final String[] pathToBus = handler.busToUse().split("#", 2);
 				try {
 					bus = (EventBus) Class.forName(pathToBus[0]).getField(pathToBus[0]).get(null);
 				} catch (ClassCastException t) {
-					// TODO: inform user
+					logger.warning("Ignoring \"" + handler.value() + "\" as busToUse is not an instance of EventBus, using default");
 				} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException t) {
-					// TODO: inform user
+					logger.warning("Ignoring \"" + handler.value() + "\" as busToUse cannot be found, using default");
 				} 
 			}
 			bus.subscribe(handler.value(), handler.priority(), (eventData)->{
@@ -71,6 +82,15 @@ public interface IEventListener {
 				}
 			});
 		}
+	}
+	
+	private static <T> @Nullable Class<T> initStatics(final @NotNull Class<T> clazz) {
+		try {
+			Class.forName(clazz.getName(), true, clazz.getClassLoader());
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Exception should not be reachable", e);
+		}
+		return clazz;
 	}
 	
 }
