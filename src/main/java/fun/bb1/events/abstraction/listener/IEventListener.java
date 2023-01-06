@@ -67,7 +67,7 @@ public interface IEventListener {
 			} else {
 				final String[] pathToBus = handler.busToUse().split("#", 2);
 				try {
-					bus = (EventBus) Class.forName(pathToBus[0]).getField(pathToBus[0]).get(null);
+					bus = (EventBus) Class.forName(pathToBus[0]).getField(pathToBus[1]).get(null);
 				} catch (ClassCastException t) {
 					logger.warning("Ignoring \"" + handler.value() + "\" as busToUse is not an instance of EventBus, using default");
 				} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException t) {
