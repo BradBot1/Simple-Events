@@ -187,7 +187,12 @@ public final class EventBus {
 	 * @param eventData The data of the event
 	 */
 	public <I> void recievePassengerAndInformWatchers(final @NotNull @DisallowsEmptyString String eventName, final @NotNull I eventData) {
-		this.recievePassenger(eventName, eventData).run();
+		final Runnable run = this.recievePassenger(eventName, eventData);
+		if (run == null) {
+			this.logger.warning("No watcher runnable recieved when expected!");
+			return;
+		}
+		run.run();
 	}
 	/**
 	 * Emits an event through the appropriate {@link IEventMiddleware} and {@link IEventHandler}s
