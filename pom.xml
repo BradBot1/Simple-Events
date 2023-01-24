@@ -34,7 +34,7 @@
 		</repository>
 		<repository>
 		    <id>repo</id>
-		    <url>http:/repo.bb1.fun:8080/releases</url>
+		    <url>https://repo.bb1.fun/releases</url>
 		</repository>
 	</repositories>
 
@@ -60,7 +60,7 @@
 	<distributionManagement>
 	    <repository>
 	        <id>repo</id>
-	        <url>http://repo.bb1.fun:8080/releases</url>
+	        <url>https://repo.bb1.fun/releases</url>
 	    </repository>
 	</distributionManagement>
 	
