@@ -30,10 +30,11 @@ public interface IEventRoute<I> {
 	 * Adds a stop to this route
 	 * 
 	 * @param priority The {@link EventPriority} to register under
-	 * @param handler The {@link IEventHandler} that is being registered
+	 * @param eventHandler The {@link IEventHandler} that is being registered
 	 * @param force If to override any pre-existing {@link IEventHandler}s (Only used when {@link EventPriority#isSingleton()} returns true on the provided priority)
 	 */
 	public void addStop(final @Nullable EventPriority priority, final @NotNull IEventHandler<I> eventHandler, final @Nullable Boolean force);
 	
 	public void removeStop(final @NotNull IEventHandler<I> eventHandler);
+	
 }
