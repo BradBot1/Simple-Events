@@ -28,6 +28,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IEventMiddleware<I> {
 	
+	static <I> @NotNull MiddlewareResult<I> fail() {
+		return new MiddlewareResult<I>(false, null);
+	}
+	
+	static <I> @NotNull MiddlewareResult<I> pass(@NotNull final I eventObject) {
+		return new MiddlewareResult<I>(true, eventObject);
+	}
+	
 	public MiddlewareResult<I> handle(@NotNull final I eventObject);
 	
 }

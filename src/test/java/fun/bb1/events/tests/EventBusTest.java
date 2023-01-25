@@ -1,5 +1,6 @@
 package fun.bb1.events.tests;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -84,13 +85,35 @@ public class EventBusTest {
 		final String eventName = "bd528264-49d5-46b9-9cdc-d547a0bf04fb";
 		final Container<Boolean> recievedEvent = new Container<>(false);
 		EventBus.DEFAULT_BUS.publishRoute(eventName, Boolean.class);
-		EventBus.DEFAULT_BUS.subscribe(eventName, (recievedMessage) -> fail("Event executed"), Character.class);
+		EventBus.DEFAULT_BUS.subscribe(eventName, (recievedMessage) -> fail("Event executed"), Boolean.class);
 		EventBus.DEFAULT_BUS.addMiddleware(eventName, (c) -> {
 			recievedEvent.setContained(true);
 			return new MiddlewareResult<>(false, null);
 		}, Boolean.class);
 		assertNull("Event was not stopped by middleware", EventBus.DEFAULT_BUS.recievePassenger(eventName, true));
 		assertTrue("Event was not recieved by middleware", recievedEvent.getContained());
+	}
+	
+	@Test
+	public void test_middleware_fail() {
+		final String eventName = "254b61c2-3fbc-4279-8596-78a9d7159cab";
+		EventBus.DEFAULT_BUS.publishRoute(eventName, Boolean.class);
+		EventBus.DEFAULT_BUS.subscribe(eventName, (recievedMessage) -> fail("Event executed"), Boolean.class);
+		EventBus.DEFAULT_BUS.addMiddleware(eventName, (c) -> fun.bb1.events.middleware.IEventMiddleware.fail(), Boolean.class);
+		assertNull("Event did not fail", EventBus.DEFAULT_BUS.recievePassenger(eventName, true));
+	}
+	
+	@Test
+	public void test_middleware_pass() {
+		final String eventName = "f857f557-0cfe-4548-b132-3c374a2d3984";
+		final Container<Boolean> recievedEvent = new Container<>(false);
+		EventBus.DEFAULT_BUS.publishRoute(eventName, Boolean.class);
+		EventBus.DEFAULT_BUS.subscribe(eventName, (recievedMessage) -> {
+			recievedEvent.setContained(true);
+		}, Boolean.class);
+		EventBus.DEFAULT_BUS.addMiddleware(eventName, (c) -> fun.bb1.events.middleware.IEventMiddleware.pass(c), Boolean.class);
+		assertNotNull("Event did not pass", EventBus.DEFAULT_BUS.recievePassenger(eventName, true));
+		assertTrue("Event did not execute", recievedEvent.getContained());
 	}
 
 }
